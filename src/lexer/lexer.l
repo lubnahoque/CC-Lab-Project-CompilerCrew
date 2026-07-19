@@ -11,6 +11,7 @@
 %%
 
 "int"           { return INT; }
+"float"         { return FLOAT; }
 "bool"          { return BOOL; }
 "if"            { return IF; }
 "else"          { return ELSE; }
@@ -19,12 +20,21 @@
 "true"          { return TRUE; }
 "false"         { return FALSE; }
 "="             { return ASSIGN; }
+"+"             { return PLUS; }
+"-"             { return MINUS; }
+"*"             { return MULT; }
+"/"             { return DIV; }
+"%"             { return MOD; }
 "=="            { return EQ; }
 "!="            { return NE; }
+">="            { return GE; }
+"<="            { return LE; }
 ">"             { return GT; }
 "<"             { return LT; }
 "&&"            { return AND; }
 "||"            { return OR; }
+"!"             { return NOT; }
+","             { return COMMA; }
 ";"             { return ';'; }
 "{"             { return '{'; }
 "}"             { return '}'; }

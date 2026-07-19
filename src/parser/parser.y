@@ -17,8 +17,19 @@ void yyerror(const char* s);
 
 %token <num> NUMBER
 %token <str> IDENTIFIER
-%token INT BOOL IF ELSE WHILE PRINT TRUE FALSE
-%token ASSIGN EQ NE GT LT AND OR
+
+%token INT FLOAT BOOL
+%token IF ELSE WHILE PRINT
+%token TRUE FALSE
+
+%token ASSIGN
+%token PLUS MINUS MULT DIV MOD
+
+%token EQ NE GT LT GE LE
+
+%token AND OR NOT
+
+%token COMMA
 
 %%
 
