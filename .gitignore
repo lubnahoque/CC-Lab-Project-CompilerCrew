@@ -2,7 +2,7 @@
 # Flex Generated Files
 # ==================================================
 lex.yy.c
-
+lex.yy.cpp
 # ==================================================
 # Bison Generated Files
 # ==================================================
@@ -10,6 +10,8 @@ y.tab.c
 y.tab.h
 parser.tab.c
 parser.tab.h
+parser.tab.cpp
+parser.tab.hpp
 parser.output
 *.output
 
@@ -24,6 +26,7 @@ parser.output
 # ==================================================
 a.out
 compiler
+compiler.exe
 main
 *.out
 
