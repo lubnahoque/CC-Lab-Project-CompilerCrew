@@ -115,18 +115,105 @@ expression
          );
 }
     | expression MINUS expression
+{
+    $$ = new BinaryExpressionNode(
+            (ExpressionNode*)$1,
+            "-",
+            (ExpressionNode*)$3
+         );
+}
     | expression MULT expression
+{
+    $$ = new BinaryExpressionNode(
+            (ExpressionNode*)$1,
+            "*",
+            (ExpressionNode*)$3
+         );
+}
     | expression DIV expression
+{
+    $$ = new BinaryExpressionNode(
+            (ExpressionNode*)$1,
+            "/",
+            (ExpressionNode*)$3
+         );
+}
     | expression MOD expression
-    | '(' expression ')'
+{
+    $$ = new BinaryExpressionNode(
+            (ExpressionNode*)$1,
+            "%",
+            (ExpressionNode*)$3
+         );
+}
+| '(' expression ')'
+{
+    $$ = $2;
+}   
     | expression GT expression
+{
+    $$ = new BinaryExpressionNode(
+            (ExpressionNode*)$1,
+            ">",
+            (ExpressionNode*)$3
+         );
+}
     | expression LT expression
+{
+    $$ = new BinaryExpressionNode(
+            (ExpressionNode*)$1,
+            "<",
+            (ExpressionNode*)$3
+         );
+}
     | expression GE expression
+{
+    $$ = new BinaryExpressionNode(
+            (ExpressionNode*)$1,
+            ">=",
+            (ExpressionNode*)$3
+         );
+}
     | expression LE expression
+{
+    $$ = new BinaryExpressionNode(
+            (ExpressionNode*)$1,
+            "<=",
+            (ExpressionNode*)$3
+         );
+}
     | expression EQ expression
+{
+    $$ = new BinaryExpressionNode(
+            (ExpressionNode*)$1,
+            "==",
+            (ExpressionNode*)$3
+         );
+}
     | expression NE expression
+{
+    $$ = new BinaryExpressionNode(
+            (ExpressionNode*)$1,
+            "!=",
+            (ExpressionNode*)$3
+         );
+}
     | expression AND expression
+{
+    $$ = new BinaryExpressionNode(
+            (ExpressionNode*)$1,
+            "&&",
+            (ExpressionNode*)$3
+         );
+}
     | expression OR expression
+{
+    $$ = new BinaryExpressionNode(
+            (ExpressionNode*)$1,
+            "||",
+            (ExpressionNode*)$3
+         );
+}
     | NOT expression
     ;
 %%
