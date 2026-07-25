@@ -2,7 +2,8 @@
 #include <iostream>
 #include <string>
 #include <cstring>
-
+#include "../ast/ASTNode.h"
+#include "../ast/NumberNode.h"
 // Declare external functions and variables from flex
 extern int yylex();
 extern int yylineno;
@@ -10,9 +11,13 @@ extern char* yytext;
 void yyerror(const char* s);
 %}
 
+%code requires {
+class ASTNode;
+}
 %union {
     int num;
     char* str;
+ASTNode* node;
 }
 
 %token <num> NUMBER
@@ -24,6 +29,8 @@ void yyerror(const char* s);
 
 %token ASSIGN EQ NE GT LT GE LE AND OR NOT
 %token PLUS MINUS MULT DIV MOD COMMA
+
+%type <node> expression
 
 %left OR
 %left AND
@@ -81,7 +88,13 @@ print_stmt : PRINT expression { std::cout << "Parsed print statement" << std::en
 
 expression
     : NUMBER
-    | IDENTIFIER { free($1); }
+      {
+          $$ = new NumberNode($1);
+      }
+    | IDENTIFIER
+      {
+          free($1);
+      }
     | TRUE
     | FALSE
     | expression PLUS expression

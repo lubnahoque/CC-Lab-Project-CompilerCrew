@@ -27,6 +27,9 @@ parser.output
 a.out
 compiler
 compiler.exe
+src/parser/parser.tab.cpp
+src/parser/parser.tab.hpp
+src/lexer/lex.yy.cpp
 main
 *.out
 
