@@ -6,6 +6,8 @@
 #include "../ast/NumberNode.h"
 #include "../ast/IdentifierNode.h"
 #include "../ast/BinaryExpressionNode.h"
+#include "../ast/BooleanNode.h"
+#include "../ast/UnaryExpressionNode.h"
 // Declare external functions and variables from flex
 extern int yylex();
 extern int yylineno;
@@ -105,7 +107,13 @@ expression
           free($1);
       }
     | TRUE
+{
+    $$ = new BooleanNode(true);
+}
     | FALSE
+{
+    $$ = new BooleanNode(false);
+}
     | expression PLUS expression
 {
     $$ = new BinaryExpressionNode(
@@ -215,6 +223,12 @@ expression
          );
 }
     | NOT expression
+{
+    $$ = new UnaryExpressionNode(
+            "!",
+            (ExpressionNode*)$2
+         );
+}
     ;
 %%
 
