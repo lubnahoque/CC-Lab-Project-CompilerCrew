@@ -1,24 +1,30 @@
 #ifndef BINARYEXPRESSIONNODE_H
 #define BINARYEXPRESSIONNODE_H
 
-#include <string>
 #include "ExpressionNode.h"
+#include <iostream>
+#include <string>
 
 class BinaryExpressionNode : public ExpressionNode {
-public:
+private:
     ExpressionNode* left;
-    std::string op;
     ExpressionNode* right;
+    std::string op;
 
-    BinaryExpressionNode(ExpressionNode* l, const std::string& o, ExpressionNode* r)
+public:
+    BinaryExpressionNode(ExpressionNode* l,
+                         const std::string& o,
+                         ExpressionNode* r)
         : left(l), op(o), right(r) {}
 
     void print() override {
-        std::cout << "(";
+        std::cout << "Operator: " << op << std::endl;
+
+        std::cout << "Left: ";
         left->print();
-        std::cout << " " << op << " ";
+
+        std::cout << "Right: ";
         right->print();
-        std::cout << ")";
     }
 };
 

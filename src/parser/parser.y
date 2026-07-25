@@ -4,6 +4,8 @@
 #include <cstring>
 #include "../ast/ASTNode.h"
 #include "../ast/NumberNode.h"
+#include "../ast/IdentifierNode.h"
+#include "../ast/BinaryExpressionNode.h"
 // Declare external functions and variables from flex
 extern int yylex();
 extern int yylineno;
@@ -80,12 +82,18 @@ declaration : INT IDENTIFIER { std::cout << "Parsed declaration: int " << $2 << 
             | BOOL IDENTIFIER { std::cout << "Parsed declaration: bool " << $2 << std::endl; free($2); }
             ;
 
-assignment : IDENTIFIER ASSIGN expression { std::cout << "Parsed assignment: " << $1 << " = ..." << std::endl; free($1); }
+assignment : IDENTIFIER ASSIGN expression {
+    std::cout << "Parsed assignment: " << $1 << std::endl;
+
+    std::cout << "Expression AST:" << std::endl;
+    $3->print();
+
+    free($1);
+}
            ;
 
 print_stmt : PRINT expression { std::cout << "Parsed print statement" << std::endl; }
            ;
-
 expression
     : NUMBER
       {
@@ -93,11 +101,19 @@ expression
       }
     | IDENTIFIER
       {
+          $$ = new IdentifierNode($1);
           free($1);
       }
     | TRUE
     | FALSE
     | expression PLUS expression
+{
+    $$ = new BinaryExpressionNode(
+            (ExpressionNode*)$1,
+            "+",
+            (ExpressionNode*)$3
+         );
+}
     | expression MINUS expression
     | expression MULT expression
     | expression DIV expression
