@@ -8,11 +8,13 @@
 #include "../ast/BinaryExpressionNode.h"
 #include "../ast/BooleanNode.h"
 #include "../ast/UnaryExpressionNode.h"
+#include "../semantic/SymbolTable.h"
 // Declare external functions and variables from flex
 extern int yylex();
 extern int yylineno;
 extern char* yytext;
 void yyerror(const char* s);
+SymbolTable symbolTable;
 %}
 
 %code requires {
@@ -80,19 +82,60 @@ while_stmt
       }
     ;
 
-declaration : INT IDENTIFIER { std::cout << "Parsed declaration: int " << $2 << std::endl; free($2); }
-            | BOOL IDENTIFIER { std::cout << "Parsed declaration: bool " << $2 << std::endl; free($2); }
-            ;
+declaration
+    : INT IDENTIFIER
+      {
+          if (!symbolTable.insert($2, "int"))
+          {
+              std::cout << "Semantic Error: Variable '" << $2
+                        << "' is already declared." << std::endl;
+          }
+          else
+          {
+              std::cout << "Parsed declaration: int " << $2 << std::endl;
+          }
 
+          free($2);
+      }
+
+    | BOOL IDENTIFIER
+      {
+          if (!symbolTable.insert($2, "bool"))
+          {
+              std::cout << "Semantic Error: Variable '" << $2
+                        << "' is already declared." << std::endl;
+          }
+          else
+          {
+              std::cout << "Parsed declaration: bool " << $2 << std::endl;
+          }
+
+          free($2);
+      }
+    ;
+    
+             
 assignment : IDENTIFIER ASSIGN expression {
-    std::cout << "Parsed assignment: " << $1 << std::endl;
+    if (!symbolTable.exists($1))
+    {
+        std::cout << "Semantic Error: Variable '"
+                  << $1
+                  << "' is not declared."
+                  << std::endl;
+    }
+    else
+    {
+        std::cout << "Parsed assignment: " << $1 << std::endl;
 
-    std::cout << "Expression AST:" << std::endl;
-    $3->print();
+        std::cout << "Expression AST:" << std::endl;
+        $3->print();
+
+        symbolTable.print();
+    }
 
     free($1);
 }
-           ;
+;
 
 print_stmt : PRINT expression { std::cout << "Parsed print statement" << std::endl; }
            ;
