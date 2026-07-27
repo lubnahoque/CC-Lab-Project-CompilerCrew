@@ -63,20 +63,32 @@ statement
     | if_stmt
     | while_stmt
     ;
+block
+    : '{'
+      {
+          symbolTable.enterScope();
+      }
+      statements
+      '}'
+      {
+          symbolTable.exitScope();
+      }
+    ;
 
 if_stmt
-    : IF '(' expression ')' '{' statements '}'
+    : IF '(' expression ')' block
       {
           std::cout << "Parsed if statement" << std::endl;
       }
-    | IF '(' expression ')' '{' statements '}' ELSE '{' statements '}'
+    | IF '(' expression ')' block ELSE block
       {
           std::cout << "Parsed if-else statement" << std::endl;
       }
     ;
 
+
 while_stmt
-    : WHILE '(' expression ')' '{' statements '}'
+    : WHILE '(' expression ')' block
       {
           std::cout << "Parsed while statement" << std::endl;
       }
@@ -145,10 +157,17 @@ expression
           $$ = new NumberNode($1);
       }
     | IDENTIFIER
-      {
-          $$ = new IdentifierNode($1);
-          free($1);
-      }
+{
+    if (!symbolTable.exists($1))
+    {
+        std::cout << "Semantic Error: Variable '"
+                  << $1
+                  << "' is not declared." << std::endl;
+    }
+
+    $$ = new IdentifierNode($1);
+    free($1);
+}
     | TRUE
 {
     $$ = new BooleanNode(true);

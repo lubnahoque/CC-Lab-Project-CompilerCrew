@@ -3,6 +3,7 @@
 
 #include "ExpressionNode.h"
 #include <iostream>
+#include <string>
 
 class BooleanNode : public ExpressionNode
 {
@@ -16,11 +17,11 @@ public:
     }
 
     void print() override
-    {
-        std::cout << "Boolean: "
-                  << (value ? "true" : "false")
-                  << std::endl;
-    }
+{
+    std::cout << "Boolean: "
+              << (value ? "true" : "false")
+              << std::endl;
+}
 };
 
 #endif
