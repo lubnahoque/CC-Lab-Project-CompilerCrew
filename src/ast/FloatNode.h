@@ -1,28 +1,28 @@
-#ifndef NUMBERNODE_H
-#define NUMBERNODE_H
+#ifndef FLOATNODE_H
+#define FLOATNODE_H
 
 #include "ExpressionNode.h"
 #include <iostream>
 #include <string>
 
-class NumberNode : public ExpressionNode
+class FloatNode : public ExpressionNode
 {
 public:
-    int value;
+    float value;
 
-    NumberNode(int val)
+    FloatNode(float val)
     {
         value = val;
     }
 
     void print() override
     {
-        std::cout << "Number: " << value << std::endl;
+        std::cout << "Float: " << value << std::endl;
     }
 
     std::string getType() override
     {
-        return "int";
+        return "float";
     }
 };
 

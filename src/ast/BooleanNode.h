@@ -17,11 +17,16 @@ public:
     }
 
     void print() override
-{
-    std::cout << "Boolean: "
-              << (value ? "true" : "false")
-              << std::endl;
-}
+    {
+        std::cout << "Boolean: "
+                  << (value ? "true" : "false")
+                  << std::endl;
+    }
+
+    std::string getType() override
+    {
+        return "bool";
+    }
 };
 
 #endif

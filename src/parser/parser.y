@@ -8,6 +8,7 @@
 #include "../ast/BinaryExpressionNode.h"
 #include "../ast/BooleanNode.h"
 #include "../ast/UnaryExpressionNode.h"
+#include "../ast/FloatNode.h"
 #include "../semantic/SymbolTable.h"
 // Declare external functions and variables from flex
 extern int yylex();
@@ -22,11 +23,13 @@ class ASTNode;
 }
 %union {
     int num;
+    float fnum;
     char* str;
-ASTNode* node;
+    ASTNode* node;
 }
 
 %token <num> NUMBER
+%token <fnum> FLOAT_NUMBER
 %token <str> IDENTIFIER
 
 %token INT FLOAT BOOL
@@ -78,10 +81,27 @@ block
 if_stmt
     : IF '(' expression ')' block
       {
+          ExpressionNode* expr = (ExpressionNode*)$3;
+
+          if (expr->getType() != "bool")
+          {
+              std::cout << "Semantic Error: Condition must be boolean."
+                        << std::endl;
+          }
+
           std::cout << "Parsed if statement" << std::endl;
       }
+
     | IF '(' expression ')' block ELSE block
       {
+          ExpressionNode* expr = (ExpressionNode*)$3;
+
+          if (expr->getType() != "bool")
+          {
+              std::cout << "Semantic Error: Condition must be boolean."
+                        << std::endl;
+          }
+
           std::cout << "Parsed if-else statement" << std::endl;
       }
     ;
@@ -90,6 +110,14 @@ if_stmt
 while_stmt
     : WHILE '(' expression ')' block
       {
+          ExpressionNode* expr = (ExpressionNode*)$3;
+
+          if (expr->getType() != "bool")
+          {
+              std::cout << "Semantic Error: Condition must be boolean."
+                        << std::endl;
+          }
+
           std::cout << "Parsed while statement" << std::endl;
       }
     ;
@@ -110,6 +138,21 @@ declaration
           free($2);
       }
 
+    | FLOAT IDENTIFIER
+      {
+          if (!symbolTable.insert($2, "float"))
+          {
+              std::cout << "Semantic Error: Variable '" << $2
+                        << "' is already declared." << std::endl;
+          }
+          else
+          {
+              std::cout << "Parsed declaration: float " << $2 << std::endl;
+          }
+
+          free($2);
+      }
+
     | BOOL IDENTIFIER
       {
           if (!symbolTable.insert($2, "bool"))
@@ -125,8 +168,7 @@ declaration
           free($2);
       }
     ;
-    
-             
+                 
 assignment : IDENTIFIER ASSIGN expression {
     if (!symbolTable.exists($1))
     {
@@ -136,16 +178,32 @@ assignment : IDENTIFIER ASSIGN expression {
                   << std::endl;
     }
     else
-    {
-        std::cout << "Parsed assignment: " << $1 << std::endl;
+{
+    std::cout << "Parsed assignment: " << $1 << std::endl;
 
-        std::cout << "Expression AST:" << std::endl;
-        $3->print();
+    ExpressionNode* expr = (ExpressionNode*)$3;
 
-        symbolTable.print();
-    }
+    std::string variableType = symbolTable.getType($1);
+    std::string expressionType = expr->getType();
 
-    free($1);
+    if (expressionType == "")
+{
+    std::cout << "Semantic Error: Invalid expression."
+              << std::endl;
+}
+else if (variableType != expressionType)
+{
+    std::cout << "Semantic Error: Type mismatch in assignment."
+              << std::endl;
+}
+
+    std::cout << "Expression AST:" << std::endl;
+    expr->print();
+
+    symbolTable.print();
+}
+
+free($1);
 }
 ;
 
@@ -156,16 +214,27 @@ expression
       {
           $$ = new NumberNode($1);
       }
+    | FLOAT_NUMBER
+{
+    $$ = new FloatNode($1);
+}
     | IDENTIFIER
 {
+    std::string type = "";
+
     if (!symbolTable.exists($1))
     {
         std::cout << "Semantic Error: Variable '"
                   << $1
-                  << "' is not declared." << std::endl;
+                  << "' is not declared."
+                  << std::endl;
+    }
+    else
+    {
+        type = symbolTable.getType($1);
     }
 
-    $$ = new IdentifierNode($1);
+    $$ = new IdentifierNode($1, type);
     free($1);
 }
     | TRUE

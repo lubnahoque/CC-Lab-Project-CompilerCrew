@@ -46,6 +46,11 @@
     return IDENTIFIER;
 }
 
+[0-9]+"."[0-9]+ {
+    yylval.fnum = atof(yytext);
+    return FLOAT_NUMBER;
+}
+
 [0-9]+ {
     yylval.num = atoi(yytext);
     return NUMBER;

@@ -26,6 +26,14 @@ public:
         if (expr)
             expr->print();
     }
+
+    std::string getType() override
+    {
+        if (expr)
+            return expr->getType();
+
+        return "";
+    }
 };
 
 #endif

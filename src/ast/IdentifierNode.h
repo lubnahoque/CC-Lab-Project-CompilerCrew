@@ -5,15 +5,34 @@
 #include <iostream>
 #include <string>
 
-class IdentifierNode : public ExpressionNode {
+class IdentifierNode : public ExpressionNode
+{
 private:
     std::string name;
+    std::string type;
 
 public:
-    IdentifierNode(const std::string& n) : name(n) {}
+    IdentifierNode(const std::string& n,
+                   const std::string& t)
+        : name(n), type(t)
+    {
+    }
 
-    void print() override {
-        std::cout << "Identifier: " << name << std::endl;
+    void print() override
+    {
+        std::cout << "Identifier: "
+                  << name
+                  << std::endl;
+    }
+
+    std::string getName() const
+    {
+        return name;
+    }
+
+    std::string getType() override
+    {
+        return type;
     }
 };
 
