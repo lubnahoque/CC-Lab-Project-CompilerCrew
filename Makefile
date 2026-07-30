@@ -5,7 +5,10 @@ CXXFLAGS = -std=gnu++11 -Wall -Isrc/parser
 TARGET = compiler.exe
 
 # Sources
-SRCS = src/main.cpp src/parser/parser.tab.cpp src/lexer/lex.yy.cpp
+SRCS = src/main.cpp \
+       src/parser/parser.tab.cpp \
+       src/lexer/lex.yy.cpp \
+       src/tac/TACGenerator.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 all: $(TARGET)

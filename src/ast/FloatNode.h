@@ -21,9 +21,14 @@ public:
     }
 
     std::string getType() override
-    {
-        return "float";
-    }
+{
+    return "float";
+}
+
+std::string getPlace() override
+{
+    return std::to_string(value);
+}
 };
 
 #endif

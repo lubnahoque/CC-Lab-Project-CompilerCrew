@@ -27,6 +27,10 @@ public:
     {
         return "bool";
     }
+    std::string getPlace() override
+    {
+    return value ? "true" : "false";
+    }
 };
 
 #endif

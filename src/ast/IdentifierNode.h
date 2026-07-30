@@ -34,6 +34,10 @@ public:
     {
         return type;
     }
+    std::string getPlace() override
+    {
+    return name;
+    }
 };
 
 #endif

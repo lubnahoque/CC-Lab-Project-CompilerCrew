@@ -10,12 +10,14 @@
 #include "../ast/UnaryExpressionNode.h"
 #include "../ast/FloatNode.h"
 #include "../semantic/SymbolTable.h"
+#include "../tac/TACGenerator.h"
 // Declare external functions and variables from flex
 extern int yylex();
 extern int yylineno;
 extern char* yytext;
 void yyerror(const char* s);
 SymbolTable symbolTable;
+TACGenerator tac;
 %}
 
 %code requires {
@@ -196,6 +198,10 @@ else if (variableType != expressionType)
     std::cout << "Semantic Error: Type mismatch in assignment."
               << std::endl;
 }
+else
+{
+    tac.emit(std::string($1) + " = " + expr->getPlace());
+}
 
     std::cout << "Expression AST:" << std::endl;
     expr->print();
@@ -324,11 +330,12 @@ expression
     | expression EQ expression
 {
     $$ = new BinaryExpressionNode(
-            (ExpressionNode*)$1,
-            "==",
-            (ExpressionNode*)$3
-         );
+         (ExpressionNode*)$1,
+         "==",
+         (ExpressionNode*)$3
+    );
 }
+            
     | expression NE expression
 {
     $$ = new BinaryExpressionNode(

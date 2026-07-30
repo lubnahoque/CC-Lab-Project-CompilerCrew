@@ -1,9 +1,11 @@
 #include <iostream>
 #include <cstdio>
+#include "tac/TACGenerator.h"
 
 // Declare external flex/bison functions and variables
 extern FILE* yyin;
 extern int yyparse();
+extern TACGenerator tac;
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
@@ -24,11 +26,16 @@ int main(int argc, char* argv[]) {
     int result = yyparse();
     fclose(file);
 
-    if (result == 0) {
-        std::cout << "Compilation/Parsing successful!" << std::endl;
-    } else {
-        std::cerr << "Compilation failed due to errors." << std::endl;
-    }
+    if (result == 0)
+{
+    std::cout << "Compilation/Parsing successful!" << std::endl;
+
+    tac.print();
+}
+else
+{
+    std::cerr << "Compilation failed due to errors." << std::endl;
+}
 
     return result;
 }

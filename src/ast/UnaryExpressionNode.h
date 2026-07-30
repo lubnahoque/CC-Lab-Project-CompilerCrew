@@ -34,6 +34,16 @@ public:
 
         return "";
     }
+    std::string getPlace() override
+    {
+    std::string operand = expr->getPlace();
+
+    std::string temp = tac.newTemp();
+
+    tac.emit(temp + " = " + op + operand);
+
+    return temp;
+    }
 };
 
 #endif

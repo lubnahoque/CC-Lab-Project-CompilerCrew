@@ -4,13 +4,17 @@
 #include "ExpressionNode.h"
 #include <iostream>
 #include <string>
+#include "../tac/TACGenerator.h"
 
+extern TACGenerator tac;
 class BinaryExpressionNode : public ExpressionNode
 {
 private:
     ExpressionNode* left;
     ExpressionNode* right;
     std::string op;
+
+    std::string place;
 
 public:
     BinaryExpressionNode(ExpressionNode* l,
@@ -67,7 +71,18 @@ public:
         }
 
         return "";
-    }
+        }
+        std::string getPlace() override
+        {
+    std::string leftPlace = left->getPlace();
+    std::string rightPlace = right->getPlace();
+
+    std::string temp = tac.newTemp();
+
+    tac.emit(temp + " = " + leftPlace + " " + op + " " + rightPlace);
+
+    return temp;
+        }
 };
 
 #endif

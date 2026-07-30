@@ -24,6 +24,11 @@ public:
     {
         return "int";
     }
+
+    std::string getPlace() override
+    {
+        return std::to_string(value);
+    }
 };
 
 #endif
