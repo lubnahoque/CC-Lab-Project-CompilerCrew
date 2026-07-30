@@ -13,11 +13,7 @@ private:
     int labelCount;
 
 public:
-    TACGenerator()
-    {
-        tempCount = 0;
-        labelCount = 0;
-    }
+    TACGenerator();
 
     std::string newTemp();
     std::string newLabel();

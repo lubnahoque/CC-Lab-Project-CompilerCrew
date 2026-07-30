@@ -1,4 +1,9 @@
 #include "TACGenerator.h"
+TACGenerator::TACGenerator()
+{
+    tempCount = 0;
+    labelCount = 0;
+}
 
 std::string TACGenerator::newTemp()
 {

@@ -92,6 +92,12 @@ if_stmt
           }
 
           std::cout << "Parsed if statement" << std::endl;
+          std::string cond = expr->getPlace();
+
+          std::string endLabel = tac.newLabel();
+
+          tac.emit("IF_FALSE " + cond + " GOTO " + endLabel);
+          tac.emit(endLabel + ":");
       }
 
     | IF '(' expression ')' block ELSE block
@@ -105,6 +111,15 @@ if_stmt
           }
 
           std::cout << "Parsed if-else statement" << std::endl;
+          std::string cond = expr->getPlace();
+
+          std::string elseLabel = tac.newLabel();
+          std::string endLabel = tac.newLabel();
+
+          tac.emit("IF_FALSE " + cond + " GOTO " + elseLabel);
+          tac.emit("GOTO " + endLabel);
+          tac.emit(elseLabel + ":");
+          tac.emit(endLabel + ":");
       }
     ;
 
@@ -121,6 +136,15 @@ while_stmt
           }
 
           std::cout << "Parsed while statement" << std::endl;
+          std::string startLabel = tac.newLabel();
+          std::string endLabel = tac.newLabel();
+
+          std::string cond = expr->getPlace();
+
+          tac.emit(startLabel + ":");
+          tac.emit("IF_FALSE " + cond + " GOTO " + endLabel);
+          tac.emit("GOTO " + startLabel);
+          tac.emit(endLabel + ":");
       }
     ;
 
