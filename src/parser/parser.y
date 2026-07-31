@@ -237,8 +237,16 @@ free($1);
 }
 ;
 
-print_stmt : PRINT expression { std::cout << "Parsed print statement" << std::endl; }
-           ;
+print_stmt :print_stmt
+    : PRINT expression
+      {
+          ExpressionNode* expr = (ExpressionNode*)$2;
+
+          tac.emit("PRINT " + expr->getPlace());
+
+          std::cout << "Parsed print statement" << std::endl;
+      }
+    ;
 expression
     : NUMBER
       {
