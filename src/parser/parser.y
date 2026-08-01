@@ -221,6 +221,14 @@ else if (variableType != expressionType)
 {
     std::cout << "Semantic Error: Type mismatch in assignment."
               << std::endl;
+
+    std::cout << "Expected "
+              << variableType
+              << std::endl;
+
+    std::cout << "Found "
+              << expressionType
+              << std::endl;
 }
 else
 {

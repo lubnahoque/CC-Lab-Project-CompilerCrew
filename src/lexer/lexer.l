@@ -3,6 +3,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
+
+bool lexicalError = false;
 %}
 
 %option noyywrap
@@ -60,8 +62,15 @@
 "//"[^\n]*      { /* ignore comments */ }
 
 . {
-    std::cerr << "Lexical Error: Invalid token '" << yytext << "' at line " << yylineno << std::endl;
-    return -1; // return error token or exit
+    lexicalError = true;
+
+    std::cerr << "Lexical Error: Invalid token '"
+              << yytext
+              << "' at line "
+              << yylineno
+              << std::endl;
+
+    return -1;
 }
 
 %%

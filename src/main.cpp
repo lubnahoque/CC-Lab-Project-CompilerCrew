@@ -6,6 +6,7 @@
 extern FILE* yyin;
 extern int yyparse();
 extern TACGenerator tac;
+extern bool lexicalError;
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
@@ -26,7 +27,7 @@ int main(int argc, char* argv[]) {
     int result = yyparse();
     fclose(file);
 
-    if (result == 0)
+    if (result == 0 && !lexicalError)
 {
     std::cout << "Compilation/Parsing successful!" << std::endl;
 
