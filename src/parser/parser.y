@@ -42,6 +42,9 @@ class ASTNode;
 %token PLUS MINUS MULT DIV MOD COMMA
 
 %type <node> expression
+%type <str> if_stmt
+%type <str> while_stmt
+%type <str> if_prefix
 
 %left OR
 %left AND
@@ -55,11 +58,11 @@ class ASTNode;
 %%
 
 program : statements
-        ;
-
-statements : statement
-           | statements statement
-           ;
+     ;
+statements
+    : statement
+    | statements statement
+    ;
 
 statement
     : declaration ';'
@@ -67,7 +70,9 @@ statement
     | print_stmt ';'
     | if_stmt
     | while_stmt
+    | block
     ;
+
 block
     : '{'
       {
@@ -79,75 +84,124 @@ block
           symbolTable.exitScope();
       }
     ;
-
-if_stmt
-    : IF '(' expression ')' block
+if_prefix
+    : IF '(' expression ')'
       {
           ExpressionNode* expr = (ExpressionNode*)$3;
 
           if (expr->getType() != "bool")
           {
-              std::cout << "Semantic Error: Condition must be boolean."
-                        << std::endl;
+              std::cout
+                  << "Semantic Error: Condition must be boolean."
+                  << std::endl;
           }
 
-          std::cout << "Parsed if statement" << std::endl;
           std::string cond = expr->getPlace();
 
-          std::string endLabel = tac.newLabel();
+          std::string falseLabel = tac.newLabel();
 
-          tac.emit("IF_FALSE " + cond + " GOTO " + endLabel);
+          tac.emit(
+              "IF_FALSE "
+              + cond
+              + " GOTO "
+              + falseLabel
+          );
+
+          $$ = strdup(falseLabel.c_str());
+      }
+    ;
+if_stmt
+    : if_prefix block
+      {
+          std::string endLabel($1);
+
           tac.emit(endLabel + ":");
+
+          free($1);
+
+          std::cout
+              << "Parsed if statement"
+              << std::endl;
       }
 
-    | IF '(' expression ')' block ELSE block
+    | if_prefix block ELSE block
       {
-          ExpressionNode* expr = (ExpressionNode*)$3;
+          std::string elseLabel($1);
 
-          if (expr->getType() != "bool")
-          {
-              std::cout << "Semantic Error: Condition must be boolean."
-                        << std::endl;
-          }
-
-          std::cout << "Parsed if-else statement" << std::endl;
-          std::string cond = expr->getPlace();
-
-          std::string elseLabel = tac.newLabel();
           std::string endLabel = tac.newLabel();
 
-          tac.emit("IF_FALSE " + cond + " GOTO " + elseLabel);
           tac.emit("GOTO " + endLabel);
           tac.emit(elseLabel + ":");
           tac.emit(endLabel + ":");
+
+          free($1);
+
+          std::cout
+              << "Parsed if-else statement"
+              << std::endl;
       }
     ;
-
-
 while_stmt
-    : WHILE '(' expression ')' block
+    : WHILE
       {
-          ExpressionNode* expr = (ExpressionNode*)$3;
+          std::string startLabel = tac.newLabel();
+
+          tac.emit(startLabel + ":");
+
+          $<str>$ = strdup(startLabel.c_str());
+      }
+      '(' expression ')'
+      {
+          ExpressionNode* expr = (ExpressionNode*)$4;
 
           if (expr->getType() != "bool")
           {
-              std::cout << "Semantic Error: Condition must be boolean."
-                        << std::endl;
+              std::cout
+                  << "Semantic Error: Condition must be boolean."
+                  << std::endl;
           }
-
-          std::cout << "Parsed while statement" << std::endl;
-          std::string startLabel = tac.newLabel();
-          std::string endLabel = tac.newLabel();
 
           std::string cond = expr->getPlace();
 
-          tac.emit(startLabel + ":");
-          tac.emit("IF_FALSE " + cond + " GOTO " + endLabel);
+          std::string endLabel = tac.newLabel();
+
+          tac.emit(
+              "IF_FALSE "
+              + cond
+              + " GOTO "
+              + endLabel
+          );
+
+          std::string labels =
+              std::string($<str>2)
+              + "|"
+              + endLabel;
+
+          $<str>$ = strdup(labels.c_str());
+
+          free($<str>2);
+      }
+      block
+      {
+          std::string labels($<str>6);
+          std::size_t separator = labels.find('|');
+
+          std::string startLabel =
+              labels.substr(0, separator);
+
+          std::string endLabel =
+              labels.substr(separator + 1);
+
           tac.emit("GOTO " + startLabel);
           tac.emit(endLabel + ":");
-      }
-    ;
 
+          free($<str>6);
+
+          std::cout
+              << "Parsed while statement"
+              << std::endl;
+      }
+    ; 
 declaration
     : INT IDENTIFIER
       {
